@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Gasolineras</string>
+
+    <!-- -
+        This is an ad unit ID for a banner test ad. Replace with your own banner ad unit id.
+        For more information, see https://support.google.com/admob/answer/3052638
+    <!- -->
+
+    <!-- Inferior en todas las páginas -->
+    <string name="banner_app_id" translatable="false">ca-app-pub-7137896603433408~2396324824</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-7137896603433408/6822407575</string>
+
+</resources>
