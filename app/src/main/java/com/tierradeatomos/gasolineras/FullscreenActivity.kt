@@ -4,23 +4,23 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import android.webkit.ValueCallback
-import android.os.Build
-import android.view.View
 
 class FullscreenActivity : AppCompatActivity() {
     private var mywebview: WebView? = null
@@ -37,7 +37,11 @@ class FullscreenActivity : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        MobileAds.initialize(this, getString(R.string.banner_app_id))
+        //MobileAds.initialize(this, getString(R.string.banner_app_id))
+        MobileAds.initialize(
+            this
+        ) { }
+
 
         mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()

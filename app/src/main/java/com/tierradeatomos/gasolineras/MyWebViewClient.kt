@@ -3,18 +3,14 @@ package com.tierradeatomos.gasolineras
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.util.Log
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 
 class MyWebViewClient internal constructor(private val activity: Activity) : WebViewClient() {
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         val url: String = request?.url.toString()
 
