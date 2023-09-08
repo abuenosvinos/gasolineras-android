@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
@@ -18,11 +19,16 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.UserMessagingPlatform
+
 
 class FullscreenActivity : AppCompatActivity() {
+    private lateinit var consentInformation: ConsentInformation
     private var mywebview: WebView? = null
     lateinit var mAdView : AdView
 
@@ -34,6 +40,8 @@ class FullscreenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_fullscreen)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.hide()
+
+        consentInformation();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -52,7 +60,6 @@ class FullscreenActivity : AppCompatActivity() {
         mywebview?.webViewClient = MyWebViewClient(this)
         val webSettings = mywebview!!.settings
         webSettings.javaScriptEnabled = true
-
 
         this.checkPermission(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -85,7 +92,6 @@ class FullscreenActivity : AppCompatActivity() {
     }
 
     private inner class JavaScriptInterface {
-        @TargetApi(Build.VERSION_CODES.KITKAT)
         @JavascriptInterface
         fun getLatLng() : String {
             var latlng : String = "";
@@ -109,7 +115,7 @@ class FullscreenActivity : AppCompatActivity() {
         }
     }
 
-    val PERMISSION_ID = 42
+    private val PERMISSION_ID = 42
     private fun checkPermission(vararg perm:String) : Boolean {
         val havePermissions = perm.toList().all {
             ContextCompat.checkSelfPermission(this,it) ==
@@ -136,5 +142,38 @@ class FullscreenActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    private fun consentInformation()
+    {
+        // Set tag for under age of consent. false means users are not under age
+        // of consent.
+        val params = ConsentRequestParameters
+            .Builder()
+            .setTagForUnderAgeOfConsent(false)
+            .build()
+
+        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation.requestConsentInfoUpdate(
+            this,
+            params,
+            ConsentInformation.OnConsentInfoUpdateSuccessListener {
+                UserMessagingPlatform.loadAndShowConsentFormIfRequired(
+                    this@FullscreenActivity,
+                    ConsentForm.OnConsentFormDismissedListener {
+                            loadAndShowError ->
+                        // Consent gathering failed.
+                        Log.w(
+                            "FullscreenActivity",
+                            loadAndShowError.toString()
+                        )
+
+                        // Consent has been gathered.
+                    }
+                )
+            },
+            {
+            })
+
     }
 }
